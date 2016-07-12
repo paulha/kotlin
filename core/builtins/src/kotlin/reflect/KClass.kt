@@ -76,6 +76,11 @@ public interface KClass<T : Any> : KDeclarationContainer, KAnnotatedElement, KCl
     /**
      * `true` if this class is `final`.
      */
+    public val visibility: KVisibility?
+
+    /**
+     * TODO
+     */
     public val isFinal: Boolean
 
     /**

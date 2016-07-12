@@ -66,6 +66,11 @@ public interface KCallable<out R> : KAnnotatedElement {
     /**
      * `true` if this callable is `final`.
      */
+    public val visibility: KVisibility?
+
+    /**
+     * TODO
+     */
     public val isFinal: Boolean
 
     /**
