@@ -273,3 +273,15 @@ fun KClass.Companion.forName(qualifiedName: String): KClass<*> {
     // TODO: map Java names to Kotlin
     return Class.forName(qualifiedName).kotlin
 }
+
+
+/**
+ * TODO
+ */
+fun <T : Any> KClass<T>.createInstance(): T {
+    // TODO: throw a meaningful exception
+    val noArgsConstructor = constructors.singleOrNull { it.parameters.all(KParameter::isOptional) }
+                            ?: TODO("No no-arg constructor in $this")
+
+    return noArgsConstructor.callBy(emptyMap())
+}
