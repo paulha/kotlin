@@ -167,6 +167,12 @@ public class DFS {
         }
     }
 
+    public static abstract class NodeHandlerWithSetResult<N, R> extends CollectingNodeHandler<N, R, LinkedHashSet<R>> {
+        protected NodeHandlerWithSetResult() {
+            super(new LinkedHashSet<R>());
+        }
+    }
+
     public static class TopologicalOrder<N> extends NodeHandlerWithListResult<N, N> {
         @Override
         public void afterChildren(N current) {

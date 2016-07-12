@@ -18,6 +18,8 @@
 package kotlin.reflect
 
 import org.jetbrains.kotlin.descriptors.ConstructorDescriptor
+import org.jetbrains.kotlin.types.typeUtil.isSubtypeOf
+import org.jetbrains.kotlin.utils.DFS
 import kotlin.reflect.jvm.internal.KClassImpl
 import kotlin.reflect.jvm.internal.KFunctionImpl
 import kotlin.reflect.jvm.internal.KTypeImpl
@@ -167,3 +169,67 @@ val <T : Any> KClass<T>.declaredMemberExtensionProperties: Collection<KProperty2
             .getMembers(memberScope, declaredOnly = true, nonExtensions = false, extensions = true)
             .filterIsInstance<KProperty2<T, *, *>>()
             .toList()
+
+
+/**
+ * Immediate superclasses of this class, in the order they are listed in the source code.
+ * Includes superclasses and superinterfaces of the class, but does not include the class itself.
+ */
+val KClass<*>.superclasses: List<KClass<*>>
+    get() = supertypes.mapNotNull { it.classifier as? KClass<*> }
+
+/**
+ * All supertypes of this class, including indirect ones, in no particular order.
+ */
+val KClass<*>.allSupertypes: Collection<KType>
+    // TODO: ensure result doesn't contain 'this'
+    get() = DFS.dfsFromNode(
+            defaultType,
+            DFS.Neighbors { current ->
+                // TODO: perform type substitution along the way
+                (current.classifier as? KClass<*>)?.supertypes.orEmpty()
+            },
+            DFS.VisitedWithSet(),
+            object : DFS.NodeHandlerWithSetResult<KType, KType>() {
+                override fun beforeChildren(current: KType): Boolean {
+                    result.add(current)
+                    return true
+                }
+            }
+    )
+
+/**
+ * All superclasses of this class, including indirect ones, in no particular order.
+ * Includes superclasses and superinterfaces of the class, but does not include the class itself.
+ */
+val KClass<*>.allSuperclasses: Collection<KClass<*>>
+    get() = allSupertypes.mapNotNull { it.classifier as? KClass<*> }
+
+/**
+ * Returns `true` if `this` class is the same or is a (possibly indirect) subclass of [derived], `false` otherwise.
+ */
+fun KClass<*>.isSubclassOf(base: KClass<*>): Boolean {
+    // TODO: performance
+    return this == base || base in this.allSuperclasses
+}
+
+/**
+ * Returns `true` if `this` class is the same or is a (possibly indirect) superclass of [derived], `false` otherwise.
+ */
+fun KClass<*>.isSuperclassOf(derived: KClass<*>): Boolean {
+    return derived.isSubclassOf(this)
+}
+
+/**
+ * Returns `true` if `this` type is the same or is a subtype of [other], `false` otherwise.
+ */
+fun KType.isSubtypeOf(other: KType): Boolean {
+    return (this as KTypeImpl).type.isSubtypeOf((other as KTypeImpl).type)
+}
+
+/**
+ * Returns `true` if `this` type is the same or is a supertype of [other], `false` otherwise.
+ */
+fun KType.isSupertypeOf(other: KType): Boolean {
+    return other.isSubtypeOf(this)
+}
