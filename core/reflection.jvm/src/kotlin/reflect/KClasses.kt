@@ -61,6 +61,16 @@ val KClass<*>.defaultType: KType
 
 
 /**
+ * TODO
+ */
+val KClass<*>.declaredMembers: Collection<KCallable<*>>
+    get() = with(this as KClassImpl) {
+        (getMembers(memberScope, declaredOnly = true, nonExtensions = true, extensions = true) +
+         getMembers(staticScope, declaredOnly = true, nonExtensions = true, extensions = true))
+                .toList()
+    }
+
+/**
  * Returns all functions declared in this class, including all non-static methods declared in the class
  * and the superclasses, as well as static methods declared in the class.
  */
