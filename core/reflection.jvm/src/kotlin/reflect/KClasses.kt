@@ -254,3 +254,12 @@ fun <T : Any> KClass<T>.cast(value: Any?): T {
 fun <T : Any> KClass<T>.safeCast(value: Any?): T? {
     return if (isInstance(value)) value as T else null
 }
+
+
+/**
+ * TODO
+ */
+fun KClass.Companion.forName(qualifiedName: String): KClass<*> {
+    // TODO: map Java names to Kotlin
+    return Class.forName(qualifiedName).kotlin
+}

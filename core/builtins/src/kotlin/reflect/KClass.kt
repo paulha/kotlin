@@ -136,4 +136,6 @@ public interface KClass<T : Any> : KDeclarationContainer, KAnnotatedElement, KCl
     override fun equals(other: Any?): Boolean
 
     override fun hashCode(): Int
+
+    public companion object
 }
