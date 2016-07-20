@@ -3,6 +3,7 @@
 // ACTION: Create object 'A'
 // ACTION: Create interface 'A'
 // ACTION: Create enum 'A'
+// ACTION: Create type alias 'A'
 // ACTION: Convert to block body
 // ACTION: Remove explicit type specification
 // ERROR: Unresolved reference: A
