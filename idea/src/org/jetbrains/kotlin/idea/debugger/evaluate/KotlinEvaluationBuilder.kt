@@ -156,10 +156,12 @@ class KotlinEvaluator(val codeFragment: KtCodeFragment, val sourcePosition: Sour
                 exception(e)
             }
 
+            val text = runReadAction { codeFragment.context?.text ?: "null" }
             val attachments = arrayOf(attachmentByPsiFile(sourcePosition.file),
                                       attachmentByPsiFile(codeFragment),
                                       Attachment("breakpoint.info", "line: ${sourcePosition.line}"),
-                                      Attachment("context.info", codeFragment.context?.text ?: "null"))
+                                      Attachment("context.info", text))
+
             LOG.error(LogMessageEx.createEvent(
                                 "Couldn't evaluate expression",
                                 ExceptionUtil.getThrowableText(e),
