@@ -25,6 +25,7 @@ import org.jetbrains.kotlin.descriptors.ClassKind
 import org.jetbrains.kotlin.types.checker.KotlinTypeChecker
 import org.jetbrains.kotlin.types.checker.TypeCheckingProcedure
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns
+import org.jetbrains.kotlin.resolve.DescriptorUtils
 import org.jetbrains.kotlin.types.typeUtil.isPrimitiveNumberType
 
 object CastDiagnosticsUtil {
@@ -45,13 +46,10 @@ object CastDiagnosticsUtil {
             if (lhsType.arguments.all { TypeUtils.isTypeParameter(it.type) }) return true
             if (rhsType.arguments.all { TypeUtils.isTypeParameter(it.type) }) return true
             if (KotlinBuiltIns.isArray(lhsType)) {
-                val lhsArgument = lhsType.arguments.firstOrNull()
-                val rhsArgument = rhsType.arguments.firstOrNull()
+                val lhsArgument = lhsType.arguments.singleOrNull()
+                val rhsArgument = rhsType.arguments.singleOrNull()
                 if (lhsArgument != null && rhsArgument != null) {
-                    if (lhsArgument.type.constructor == rhsArgument.type.constructor) return true
-                    if (KotlinTypeChecker.DEFAULT.isSubtypeOf(TypeUtils.makeNotNullable(lhsArgument.type), rhsArgument.type)) {
-                        return true
-                    }
+                    return isCastPossible(lhsArgument.type, rhsArgument.type, platformToKotlinClassMap)
                 }
             }
         }
@@ -78,6 +76,12 @@ object CastDiagnosticsUtil {
 
         for (aType in aTypes) {
             for (bType in bTypes) {
+                (aType.constructor.declarationDescriptor as? ClassDescriptor)?.let {
+                    if (DescriptorUtils.isSubtypeOfClass(bType, it)) return true
+                }
+                (bType.constructor.declarationDescriptor as? ClassDescriptor)?.let {
+                    if (DescriptorUtils.isSubtypeOfClass(aType, it)) return true
+                }
                 if (KotlinTypeChecker.DEFAULT.isSubtypeOf(aType, bType)) return true
                 if (KotlinTypeChecker.DEFAULT.isSubtypeOf(bType, aType)) return true
             }
