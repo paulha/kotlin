@@ -21,9 +21,9 @@ inline fun test(crossinline s: () -> Unit) {
 
 // 3 INNERCLASS Kt10259_3Kt\$test\$1 null
 // 2 INNERCLASS Kt10259_3Kt\$test\$1\$1
-// 2 INNERCLASS Kt10259_3Kt\$box\$\$inlined\$test\$1
-// 2 INNERCLASS Kt10259_3Kt\$box\$\$inlined\$test\$lambda\$1
+// 8 INNERCLASS Kt10259_3Kt\$box\$\$inlined\$test\$1
+// 6 INNERCLASS Kt10259_3Kt\$box\$\$inlined\$test\$1\$1
 // inlined:
-// 2 INNERCLASS Kt10259_3Kt\$box\$\$inlined\$test\$lambda\$lambda\$lambda\$1
-// 2 INNERCLASS Kt10259_3Kt\$box\$\$inlined\$test\$lambda\$lambda\$lambda\$lambda\$1
+// 4 INNERCLASS Kt10259_3Kt\$box\$\$inlined\$test\$1\$1\$lambda\$1
+// 2 INNERCLASS Kt10259_3Kt\$box\$\$inlined\$test\$1\$1\$lambda\$1\$1
 // 13 INNERCLASS
